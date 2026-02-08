@@ -1,5 +1,7 @@
 package com.miru.global.auth.dto;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -8,17 +10,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter
+@RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
     private final String role;
     private final String status;
 
-    public CustomOAuth2User(OAuth2Response oAuth2Response, String role, String status) {
-        this.oAuth2Response = oAuth2Response;
-        this.role = role;
-        this.status = status;
-    }
+    private final SessionUser sessionUser;
 
     @Override
     public Map<String, Object> getAttributes() {

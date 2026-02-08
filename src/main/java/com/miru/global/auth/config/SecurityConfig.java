@@ -3,13 +3,20 @@ package com.miru.global.auth.config;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.miru.global.auth.service.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -40,7 +47,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // 3. 허용할 헤더 (인증 관련 헤더 포함)
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN"));
 
         // 4. 매우 중요: 쿠키/세션 정보를 주고받으려면 true로 설정해야 함
         configuration.setAllowCredentials(true);
@@ -51,11 +58,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    public RoleHierarchy roleHierarchy() {
+
+        // 계층 관계 설정 (ADMIN > USER 관계)
+        return RoleHierarchyImpl.withRolePrefix("ROLE_")
+                .role("ADMIN").implies("USER").build();
+
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler, OAuth2LoginFailureHandler oAuth2LoginFailureHandler) throws Exception {
 
-        // 개발 과정중에 csrf 보안 off -> 배포 전 삭제 필요
+        // csrf 토큰 처리
         http
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         // formlogin 방식 사용 X
         http
@@ -65,6 +82,7 @@ public class SecurityConfig {
         http
                 .httpBasic((basic) -> basic.disable());
 
+        // OAuth2 로그인 처리 필터
         http
                 .oauth2Login((oauth2) -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)
@@ -72,10 +90,47 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService)));
 
+        // 인가 과정에서 걸리면 401 에러 리턴
+        http
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+
+        // 페이지 별 인가 설정
         http
                 .authorizeHttpRequests((auth) -> auth
+                        // 관리자 전용 페이지 권한 설정
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // 자기분석 페이지 권한 설정 (비 로그인 유저도 입장 가능)
+                        .requestMatchers(HttpMethod.GET, "/api/analysis").permitAll()
+
+                        // 게시판 페이지 권한 설정 (비 로그인 유저도 게시판 조회 및 검색 가능)
+                        .requestMatchers(HttpMethod.GET, "/api/board", "/api/board/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/board/{id}").permitAll()
+
+                        // 그 외 기본적인 인증 필요 페이지 (마이 페이지, 문의 페이지)
+                        .requestMatchers("/api/mypage/**").authenticated()
+                        .requestMatchers("/api/inquiry/**").authenticated()
+
+                        // 모든 사람 이용 가능
+                        .requestMatchers("/error","/favicon.ico").permitAll()
                         .requestMatchers("/", "/oauth/**", "/login/**").permitAll()
                         .anyRequest().authenticated());
+
+        // 로그아웃
+        http
+                .logout(logout -> logout
+                        // 프론트에서 이 주소로 POST 요청 보내면 로그아웃
+                        .logoutUrl("/api/logout")
+
+                        // 상태 코드 200 반환
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+
+                        // 세션 및 쿠키 삭제
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID", "XSRF-TOKEN"));
 
         return http.build();
     }

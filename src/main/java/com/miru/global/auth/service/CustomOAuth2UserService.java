@@ -40,13 +40,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 로그인 / 회원가입 진행
         User userEntity = validateAndRegister(oAuth2Response);
 
-        // 세션 저장
-        httpSession.setAttribute("user", new SessionUser(userEntity));
-
         return new CustomOAuth2User(
                 oAuth2Response,
                 userEntity.getRole().getKey(),
-                userEntity.getStatus().name()
+                userEntity.getStatus().name(),
+                new SessionUser(userEntity)
         );
     }
 
@@ -95,7 +93,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .loginFromId(providerId)
                     .nickname(tempNickname)
                     .email(email)
-                    .role(Role.USER)
+                    .role(Role.GUEST)
                     .build();
 
             userRepository.save(newUser);
