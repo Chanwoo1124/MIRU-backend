@@ -25,6 +25,10 @@ repositories {
 }
 
 dependencies {
+	// Redis & Spring Session
+	//implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//implementation 'org.springframework.session:spring-session-data-redis'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -39,6 +43,9 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+	// .env 파일 리더
+	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 }
 
 tasks.named('test') {
