@@ -39,7 +39,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof SessionUser) {
+        if (principal instanceof CustomOAuth2User) {
             CustomOAuth2User customUser = (CustomOAuth2User) principal;
 
             return customUser.getSessionUser();
