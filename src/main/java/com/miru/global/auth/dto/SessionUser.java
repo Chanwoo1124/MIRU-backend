@@ -11,11 +11,13 @@ public class SessionUser implements Serializable { // ★ implements Serializabl
     private String nickname;
     private String role;
     private String status;
+    private String email;
 
     public SessionUser(User user) {
         this.id = user.getId();
         this.nickname = user.getNickname();
         this.role = user.getRole().getKey();
         this.status = user.getStatus().name();
+        this.email = user.getEmail();
     }
 }
