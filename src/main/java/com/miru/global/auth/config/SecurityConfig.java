@@ -40,7 +40,9 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://192.168.0.13:3000",
-                "http://192.168.0.13.nip.io:3000"
+                "http://192.168.0.13.nip.io:3000",
+                "http://192.168.0.44:3000",  // 프론트엔드 개발자 주소 (IP)
+                "http://192.168.0.44.nip.io:3000"  // 프론트엔드 개발자 주소 (nip.io)
         ));
 
         // 2. 허용할 HTTP 메서드
@@ -71,8 +73,11 @@ public class SecurityConfig {
 
         // csrf 토큰 처리
         http
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+                .csrf(csrf -> {
+                    CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                    csrfTokenRepository.setCookieDomain("nip.io");  // 쿠키 도메인 설정 (점 제거)
+                    csrf.csrfTokenRepository(csrfTokenRepository);
+                });
 
         // formlogin 방식 사용 X
         http

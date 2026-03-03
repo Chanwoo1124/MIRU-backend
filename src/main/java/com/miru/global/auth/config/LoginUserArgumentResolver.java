@@ -3,7 +3,6 @@ package com.miru.global.auth.config;
 import com.miru.global.auth.annotation.LoginUser;
 import com.miru.global.auth.dto.CustomOAuth2User;
 import com.miru.global.auth.dto.SessionUser;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
@@ -16,14 +15,11 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
-@RequiredArgsConstructor
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private final HttpSession httpSession;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        boolean isLoginUserAnnotation = parameter.getMethodAnnotation(LoginUser.class) != null;
+        boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
         boolean isUserClass = SessionUser.class.equals(parameter.getParameterType());
         return isLoginUserAnnotation && isUserClass;
     }

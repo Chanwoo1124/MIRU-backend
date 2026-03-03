@@ -6,16 +6,13 @@ import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.*;
 import com.miru.global.error.ErrorType;
 import com.miru.global.error.OAuth2BusinessException;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -24,7 +21,6 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
 
     @Override
     @Transactional
@@ -93,7 +89,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .loginFromId(providerId)
                     .nickname(tempNickname)
                     .email(email)
-                    .role(Role.GUEST)
+                    .role(Role.USER)
                     .build();
 
             userRepository.save(newUser);

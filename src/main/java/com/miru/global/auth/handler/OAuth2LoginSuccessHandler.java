@@ -16,18 +16,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
-        boolean isGuest = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_GUEST"));
-
-        String targetUrl;
-
-        // 프론트로 리다이렉트 (예: 리액트가 3000번 포트라면)
-        if (isGuest) {
-            targetUrl = "http://localhost:3000/nickname";
-        }  else {
-            targetUrl = "http://localhost:3000/";
-        }
+        // 모든 사용자를 자기분석 페이지로 리다이렉트
+        // nip.io 도메인 사용으로 쿠키 공유 가능
+        String targetUrl = "http://192.168.0.44.nip.io:3000/analysis";
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
