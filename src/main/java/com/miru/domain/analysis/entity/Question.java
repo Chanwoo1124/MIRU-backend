@@ -20,14 +20,8 @@ public class Question {
     @Column(name = "order_id", nullable = false)
     private int orderId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private QuestionTag tag;
-
-
-    public Question(String content, int orderId, QuestionTag tag) {
+    public Question(String content, int orderId) {
         this.content = content;
         this.orderId = orderId;
-        this.tag = tag;
     }
 }

@@ -38,4 +38,10 @@ public class Answer {
         this.content = content;
         this.status = status;
     }
+
+    /** 답변 내용 및 상태 수정 */
+    public void update(String content, AnswerStatus status) {
+        this.content = content;
+        this.status = status;
+    }
 }

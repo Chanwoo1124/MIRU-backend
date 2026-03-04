@@ -1,21 +1,23 @@
 package com.miru.global.auth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.miru.global.auth.service.CustomOAuth2UserService;
+import com.miru.global.common.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -41,6 +43,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://192.168.0.13:3000",
                 "http://192.168.0.13.nip.io:3000",
+                "http://192.168.0.7:3000",
+                "http://192.168.0.7.nip.io:3000",
                 "http://192.168.0.44:3000",  // 프론트엔드 개발자 주소 (IP)
                 "http://192.168.0.44.nip.io:3000"  // 프론트엔드 개발자 주소 (nip.io)
         ));
@@ -75,7 +79,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> {
                     CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                    csrfTokenRepository.setCookieDomain("nip.io");  // 쿠키 도메인 설정 (점 제거)
+                    csrfTokenRepository.setCookieDomain("nip.io");
                     csrf.csrfTokenRepository(csrfTokenRepository);
                 });
 
@@ -95,10 +99,15 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService)));
 
-        // 인가 과정에서 걸리면 401 에러 리턴
+        // 비로그인 접근 시 401 + ApiResponse 형식으로 반환
         http
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+                            new ObjectMapper().writeValue(response.getWriter(),
+                                    ApiResponse.error("로그인 세션이 만료되었습니다. 다시 로그인해 주세요."));
+                        }));
 
         // 페이지 별 인가 설정
         http
@@ -110,8 +119,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/analysis").permitAll()
 
                         // 게시판 페이지 권한 설정 (비 로그인 유저도 게시판 조회 및 검색 가능)
-                        .requestMatchers(HttpMethod.GET, "/api/board", "/api/board/search").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/board/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/boards", "/api/boards/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()
 
                         // 그 외 기본적인 인증 필요 페이지 (마이 페이지, 문의 페이지)
                         .requestMatchers("/api/mypage/**").authenticated()

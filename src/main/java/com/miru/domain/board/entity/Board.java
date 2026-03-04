@@ -58,10 +58,36 @@ public class Board extends BaseEntity {
 
 
     @Builder
-    public Board(User user,String title, String content, BoardType type) {
+    public Board(User user, String title, String content, BoardType type) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.type = type;
+    }
+
+    /** 게시글 수정 */
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    /** 조회수 증가 */
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
+
+    /** 댓글수 증가 */
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+
+    /** 좋아요수 증가 */
+    public void incrementLikeCount() {
+        this.likeCount++;
+    }
+
+    /** 좋아요수 감소 */
+    public void decrementLikeCount() {
+        this.likeCount--;
     }
 }

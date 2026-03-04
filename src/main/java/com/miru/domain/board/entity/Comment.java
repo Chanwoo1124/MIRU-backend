@@ -51,4 +51,15 @@ public class Comment extends BaseEntity {
         this.parent = parent;
         this.isDeleted = false;
     }
+
+    /** 댓글 내용 수정 */
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    /** 댓글 삭제 처리 (내용을 삭제 문구로 변경) */
+    public void delete() {
+        this.content = "삭제된 메시지입니다.";
+        this.isDeleted = true;
+    }
 }
