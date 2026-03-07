@@ -3,9 +3,10 @@ package com.miru.global.auth.dto;
 import com.miru.global.error.ErrorType;
 import com.miru.global.error.OAuth2BusinessException;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class NaverResponse implements OAuth2Response {
+public class NaverResponse implements OAuth2Response, Serializable {
 
     private final Map<String, Object> attributes;
 

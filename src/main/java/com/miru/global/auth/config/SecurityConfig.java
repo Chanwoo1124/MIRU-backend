@@ -38,19 +38,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 1. 허용할 프론트엔드 주소들 (여기에 님 아이피도 꼭 넣으세요)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://192.168.0.13:3000",
-                "http://192.168.0.13.nip.io:3000",
-                "http://192.168.0.7:3000",
-                "http://192.168.0.7.nip.io:3000",
-                "http://192.168.0.44:3000",  // 프론트엔드 개발자 주소 (IP)
-                "http://192.168.0.44.nip.io:3000"  // 프론트엔드 개발자 주소 (nip.io)
-        ));
+        // 개발 환경 - 전체 허용
+        configuration.addAllowedOriginPattern("*");
 
         // 2. 허용할 HTTP 메서드
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
         // 3. 허용할 헤더 (인증 관련 헤더 포함)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN"));
@@ -75,13 +67,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler, OAuth2LoginFailureHandler oAuth2LoginFailureHandler) throws Exception {
 
-        // csrf 토큰 처리
+        // csrf 토큰 처리 (H2 콘솔 경로는 예외)
+        // Spring Security 6에서 기본 핸들러가 XorCsrfTokenRequestAttributeHandler로 변경되어
+        // 쿠키값과 X-XSRF-TOKEN 헤더값이 불일치하는 문제 → CsrfTokenRequestAttributeHandler로 교체
         http
                 .csrf(csrf -> {
                     CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
                     csrfTokenRepository.setCookieDomain("nip.io");
-                    csrf.csrfTokenRepository(csrfTokenRepository);
+                    csrf.csrfTokenRepository(csrfTokenRepository)
+                        .csrfTokenRequestHandler(new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler())
+                        .ignoringRequestMatchers("/h2-console/**");
                 });
+
+        // H2 콘솔 iframe 허용
+        http
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         // formlogin 방식 사용 X
         http
@@ -122,6 +122,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/boards", "/api/boards/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()
 
+                        // 로그인 유저 정보 조회
+                        .requestMatchers("/api/me").authenticated()
+
                         // 그 외 기본적인 인증 필요 페이지 (마이 페이지, 문의 페이지)
                         .requestMatchers("/api/mypage/**").authenticated()
                         .requestMatchers("/api/inquiry/**").authenticated()
@@ -129,6 +132,8 @@ public class SecurityConfig {
                         // 모든 사람 이용 가능
                         .requestMatchers("/error","/favicon.ico").permitAll()
                         .requestMatchers("/", "/oauth/**", "/login/**").permitAll()
+                        // H2 콘솔 (개발 환경)
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated());
 
         // 로그아웃

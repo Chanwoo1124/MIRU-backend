@@ -8,9 +8,11 @@ import com.miru.global.auth.dto.SessionUser;
 import com.miru.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/boards")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<ApiResponse<BoardListResponseDto>> getBoards(
             @RequestParam(defaultValue = "0") int page) {
+        log.info("GET /api/boards - page: {}", page);
         return ResponseEntity.ok(ApiResponse.success(boardService.getBoards(page)));
     }
 
@@ -31,6 +34,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardListResponseDto>> searchBoards(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page) {
+        log.info("GET /api/boards/search - keyword: {}, page: {}", keyword, page);
         return ResponseEntity.ok(ApiResponse.success(boardService.searchBoards(keyword, page)));
     }
 
@@ -39,6 +43,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardDetailResponseDto>> createBoard(
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody BoardCreateRequestDto dto) {
+        log.info("POST /api/boards - user: {}", sessionUser.getEmail());
         return ResponseEntity.ok(ApiResponse.success("게시글이 작성되었습니다.", boardService.createBoard(sessionUser, dto)));
     }
 
@@ -47,6 +52,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardDetailResponseDto>> getBoard(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser) {
+        log.info("GET /api/boards/{}", id);
         return ResponseEntity.ok(ApiResponse.success(boardService.getBoard(id, sessionUser)));
     }
 
@@ -56,6 +62,7 @@ public class BoardController {
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody BoardUpdateRequestDto dto) {
+        log.info("PATCH /api/boards/{} - user: {}", id, sessionUser.getEmail());
         return ResponseEntity.ok(ApiResponse.success("게시글이 수정되었습니다.", boardService.updateBoard(id, sessionUser, dto)));
     }
 
@@ -64,6 +71,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardDetailResponseDto>> deleteBoard(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser) {
+        log.info("DELETE /api/boards/{} - user: {}", id, sessionUser.getEmail());
         return ResponseEntity.ok(ApiResponse.success("게시글이 성공적으로 삭제되었습니다.", boardService.deleteBoard(id, sessionUser)));
     }
 
@@ -73,6 +81,7 @@ public class BoardController {
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody CommentCreateRequestDto dto) {
+        log.info("POST /api/boards/{}/comment - user: {}", id, sessionUser.getEmail());
         return ResponseEntity.ok(ApiResponse.success(boardService.createComment(id, sessionUser, dto)));
     }
 
@@ -81,6 +90,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardDetailResponseDto>> toggleLike(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser) {
+        log.info("POST /api/boards/{}/like - user: {}", id, sessionUser.getEmail());
         return ResponseEntity.ok(ApiResponse.success(boardLikeService.toggleLike(id, sessionUser)));
     }
 }

@@ -4,7 +4,9 @@ import com.miru.domain.analysis.entity.Question;
 import com.miru.domain.analysis.repository.QuestionRepository;
 import com.miru.domain.board.entity.Board;
 import com.miru.domain.board.entity.BoardType;
+import com.miru.domain.board.entity.Comment;
 import com.miru.domain.board.repository.BoardRepository;
+import com.miru.domain.board.repository.CommentRepository;
 import com.miru.domain.user.entity.Role;
 import com.miru.domain.user.entity.User;
 import com.miru.domain.user.repository.UserRepository;
@@ -19,6 +21,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private final QuestionRepository questionRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -90,13 +93,99 @@ public class DataInitializer implements ApplicationRunner {
                 {"취업 준비 마음가짐", "취업 준비 중 멘탈 관리 방법에 대해 이야기해봅니다."}
         };
 
-        for (String[] board : boards) {
-            boardRepository.save(Board.builder()
+        // 일반 게시글 저장 (댓글 달 대상 게시글)
+        Board targetBoard = null;
+        for (int i = 0; i < boards.length; i++) {
+            Board saved = boardRepository.save(Board.builder()
                     .user(user)
-                    .title(board[0])
-                    .content(board[1])
+                    .title(boards[i][0])
+                    .content(boards[i][1])
                     .type(BoardType.GENERAL)
                     .build());
+            if (i == 0) targetBoard = saved; // 첫 번째 게시글에 댓글 추가
+        }
+
+        // 댓글 + 대댓글 목데이터 생성 (첫 번째 일반 게시글 기준)
+        if (targetBoard != null) {
+            // 댓글 1
+            Comment comment1 = commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("저도 스프링 부트 공부 중인데 정말 도움이 됩니다!")
+                    .parent(null)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            // 댓글 1의 대댓글
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("저도 같은 방법으로 공부했어요 ㅎㅎ")
+                    .parent(comment1)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("혹시 추천하는 강의도 있나요?")
+                    .parent(comment1)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            // 댓글 2
+            Comment comment2 = commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("공식 문서도 같이 보시면 더 좋아요!")
+                    .parent(null)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            // 댓글 2의 대댓글
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("공식 문서가 생각보다 잘 되어 있더라고요")
+                    .parent(comment2)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("영어가 약해서 번역본으로 보고 있어요 ㅠ")
+                    .parent(comment2)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("DeepL 쓰면 번역이 꽤 자연스러워요!")
+                    .parent(comment2)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            // 댓글 3
+            Comment comment3 = commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("게시글 감사합니다. 북마크 해뒀어요 👍")
+                    .parent(null)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            // 댓글 3의 대댓글
+            commentRepository.save(Comment.builder()
+                    .board(targetBoard)
+                    .user(user)
+                    .context("도움이 됐으면 좋겠네요!")
+                    .parent(comment3)
+                    .build());
+            targetBoard.incrementCommentCount();
+
+            boardRepository.save(targetBoard);
         }
     }
 }
