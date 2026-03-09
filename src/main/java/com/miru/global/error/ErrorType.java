@@ -21,6 +21,7 @@ public enum ErrorType {
 
     // 유저
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_001", "해당 유저를 찾을 수 없습니다."),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER_002", "이미 사용중인 닉네임입니다."),
 
     // 게시판
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD_001", "해당 게시글을 찾을 수 없습니다."),
