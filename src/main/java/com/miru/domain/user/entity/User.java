@@ -53,4 +53,21 @@ public class User extends BaseEntity {
         this.status = UserStatus.ACTIVE;
     }
 
+    /** 닉네임 변경 */
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    /** 회원 탈퇴 처리 (소프트 삭제) */
+    public void withdraw() {
+        this.status = UserStatus.DELETE;
+        this.deleteAt = LocalDate.now();
+    }
+
+    /** 탈퇴 유저 재가입 시 계정 초기화 */
+    public void reactivate() {
+        this.status = UserStatus.ACTIVE;
+        this.deleteAt = null;
+    }
+
 }

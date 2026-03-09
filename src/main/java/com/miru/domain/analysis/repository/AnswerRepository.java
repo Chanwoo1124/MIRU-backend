@@ -1,6 +1,7 @@
 package com.miru.domain.analysis.repository;
 
 import com.miru.domain.analysis.entity.Answer;
+import com.miru.domain.analysis.entity.AnswerStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -12,4 +13,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     /** 특정 유저의 특정 질문 답변 삭제 */
     void deleteByUserIdAndQuestionId(Long userId, Long questionId);
+
+    /** 특정 유저의 상태별 답변 수 */
+    long countByUserIdAndStatus(Long userId, AnswerStatus status);
 }

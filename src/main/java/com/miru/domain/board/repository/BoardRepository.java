@@ -9,6 +9,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
+    /** 특정 유저의 게시글 목록 조회 (최신순) */
+    Page<Board> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    /** 특정 유저의 전체 게시글 수 */
+    long countByUserId(Long userId);
+
     /**
      * 전체 게시글 조회 - NOTICE 타입 최상단 고정 후 최신순 정렬
      */

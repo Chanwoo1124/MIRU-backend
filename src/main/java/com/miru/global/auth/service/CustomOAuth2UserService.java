@@ -2,6 +2,7 @@ package com.miru.global.auth.service;
 
 import com.miru.domain.user.entity.Role;
 import com.miru.domain.user.entity.User;
+import com.miru.domain.user.entity.UserStatus;
 import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.*;
 import com.miru.global.error.ErrorType;
@@ -74,6 +75,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // db에 등록된 유저 있는지 찾기
         User user = userRepository.findByLoginFromAndLoginFromId(provider, providerId);
+
+        // 탈퇴한 유저가 동일 소셜 계정으로 재가입 시 계정 초기화
+        if (user != null && user.getStatus() == UserStatus.DELETE) {
+            user.reactivate();
+            return user;
+        }
 
         // userEntity가 비어있을 때 (등록된 유저가 없을 때)
         if (user == null) {
