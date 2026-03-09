@@ -66,7 +66,7 @@ public class BoardLikeService {
 
         BoardDetailResponseDto.Item item = new BoardDetailResponseDto.Item(
                 board.getId(), board.getTitle(), board.getContent(), board.getUser().getNickname(),
-                board.getViewCount(), board.getLikeCount(), isLiked, board.getCreatedAt(), commentItems
+                board.getViewCount(), board.getLikeCount(), board.getCommentCount(), isLiked, board.getCreatedAt(), commentItems
         );
 
         return new BoardDetailResponseDto(List.of(item));

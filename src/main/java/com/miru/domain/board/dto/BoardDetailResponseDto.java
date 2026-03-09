@@ -28,6 +28,7 @@ public class BoardDetailResponseDto {
         private String writer;
         private int viewCount;
         private int likeCount;
+        private int commentCount;
         /** 로그인 유저의 좋아요 여부 */
         private boolean isLiked;
         private LocalDateTime createdAt;
