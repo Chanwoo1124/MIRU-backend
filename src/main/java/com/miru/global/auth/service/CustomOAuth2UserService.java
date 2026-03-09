@@ -82,7 +82,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuth2BusinessException(ErrorType.DUPLICATE_EMAIL);
             });
 
-            String tempNickname = "Guest_" + UUID.randomUUID().toString().substring(0, 8);
+            String tempNickname = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
             User newUser = User.builder()
                     .loginFrom(provider)
