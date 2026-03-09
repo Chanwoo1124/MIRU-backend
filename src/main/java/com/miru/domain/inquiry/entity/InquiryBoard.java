@@ -33,11 +33,20 @@ public class InquiryBoard extends BaseEntity {
     @Column(nullable = false, length = 20)
     private InquiryStatus status;
 
+    /** 문의 삭제 시 답변도 함께 삭제 */
+    @OneToOne(mappedBy = "inquiryBoard", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private InquiryAnswer answer;
+
     @Builder
     public InquiryBoard(User user, String title, String content) {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.status = WAIT;
+        this.status = WAITING;
+    }
+
+    /** 문의 상태를 완료로 변경 (관리자 답변 등록 시 호출) */
+    public void complete() {
+        this.status = COMPLETED;
     }
 }

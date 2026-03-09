@@ -127,7 +127,7 @@ public class SecurityConfig {
 
                         // 그 외 기본적인 인증 필요 페이지 (마이 페이지, 문의 페이지)
                         .requestMatchers("/api/mypage/**").authenticated()
-                        .requestMatchers("/api/inquiry/**").authenticated()
+                        .requestMatchers("/api/inquiries/**").authenticated()
 
                         // 모든 사람 이용 가능
                         .requestMatchers("/error","/favicon.ico").permitAll()

@@ -30,7 +30,10 @@ public enum ErrorType {
 
     // 자기분석
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS_001", "해당 질문을 찾을 수 없습니다."),
-    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS_002", "해당 답변을 찾을 수 없습니다.");
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS_002", "해당 답변을 찾을 수 없습니다."),
+
+    // 문의 게시판
+    INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "INQUIRY_001", "해당 문의를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
