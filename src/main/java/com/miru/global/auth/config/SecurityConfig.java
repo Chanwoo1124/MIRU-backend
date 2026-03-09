@@ -142,9 +142,12 @@ public class SecurityConfig {
                         // 프론트에서 이 주소로 POST 요청 보내면 로그아웃
                         .logoutUrl("/api/logout")
 
-                        // 상태 코드 200 반환
+                        // 로그아웃 성공 시 ApiResponse 형식으로 반환
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+                            new ObjectMapper().writeValue(response.getWriter(),
+                                    ApiResponse.success("로그아웃 되었습니다.", null));
                         })
 
                         // 세션 및 쿠키 삭제
