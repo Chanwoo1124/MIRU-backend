@@ -49,4 +49,9 @@ public class InquiryBoard extends BaseEntity {
     public void complete() {
         this.status = COMPLETED;
     }
+
+    /** 문의 상태를 대기로 복구 (관리자 답변 삭제 시 호출) */
+    public void reopen() {
+        this.status = WAITING;
+    }
 }

@@ -34,7 +34,9 @@ public enum ErrorType {
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANALYSIS_002", "해당 답변을 찾을 수 없습니다."),
 
     // 문의 게시판
-    INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "INQUIRY_001", "해당 문의를 찾을 수 없습니다.");
+    INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "INQUIRY_001", "해당 문의를 찾을 수 없습니다."),
+    INQUIRY_ALREADY_ANSWERED(HttpStatus.BAD_REQUEST, "INQUIRY_002", "이미 답변이 등록된 문의입니다."),
+    INQUIRY_ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "INQUIRY_003", "해당 문의에 등록된 답변이 없습니다.");
 
     private final HttpStatus status;
     private final String code;
