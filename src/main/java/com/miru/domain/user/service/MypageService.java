@@ -72,7 +72,8 @@ public class MypageService {
         if (sessionUser == null) throw new BusinessException(ErrorType.UNAUTHORIZED);
 
         PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
-        Page<Comment> commentPage = commentRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(sessionUser.getId(), pageable);
+        // board fetch join으로 N+1 방지
+        Page<Comment> commentPage = commentRepository.findByUserIdWithBoard(sessionUser.getId(), pageable);
 
         List<MypageCommentListResponseDto.Item> items = commentPage.getContent().stream()
                 .map(c -> new MypageCommentListResponseDto.Item(

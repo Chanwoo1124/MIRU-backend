@@ -208,13 +208,12 @@ public class BoardService {
 
     /** 상세 응답 DTO 빌드 (공통) */
     private BoardDetailResponseDto buildDetailResponse(Board board, boolean isLiked) {
-        List<Comment> topComments = commentRepository
-                .findByBoardIdAndParentIsNullOrderByCreatedAtAsc(board.getId());
+        // fetch join으로 최상위 댓글 + 대댓글 한 번에 조회 (N+1 방지)
+        List<Comment> topComments = commentRepository.findTopCommentsWithReplies(board.getId());
 
         List<BoardDetailResponseDto.CommentItem> commentItems = topComments.stream()
                 .map(c -> {
-                    List<Comment> replies = commentRepository.findByParentIdOrderByCreatedAtAsc(c.getId());
-                    List<BoardDetailResponseDto.ReplyItem> replyItems = replies.stream()
+                    List<BoardDetailResponseDto.ReplyItem> replyItems = c.getReplies().stream()
                             .map(r -> new BoardDetailResponseDto.ReplyItem(
                                     r.getId(), r.getUser().getNickname(), r.getContent(), r.getCreatedAt()
                             ))

@@ -49,11 +49,11 @@ public class BoardLikeService {
             isLiked = true;
         }
 
+        // fetch join으로 최상위 댓글 + 대댓글 한 번에 조회 (N+1 방지)
         List<BoardDetailResponseDto.CommentItem> commentItems = commentRepository
-                .findByBoardIdAndParentIsNullOrderByCreatedAtAsc(board.getId()).stream()
+                .findTopCommentsWithReplies(board.getId()).stream()
                 .map(c -> {
-                    List<BoardDetailResponseDto.ReplyItem> replyItems = commentRepository
-                            .findByParentIdOrderByCreatedAtAsc(c.getId()).stream()
+                    List<BoardDetailResponseDto.ReplyItem> replyItems = c.getReplies().stream()
                             .map(r -> new BoardDetailResponseDto.ReplyItem(
                                     r.getId(), r.getUser().getNickname(), r.getContent(), r.getCreatedAt()
                             ))

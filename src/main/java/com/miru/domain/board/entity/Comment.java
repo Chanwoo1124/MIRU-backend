@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,6 +37,11 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
+
+    /** 대댓글 목록 (작성순 정렬) */
+    @OneToMany(mappedBy = "parent")
+    @OrderBy("createdAt ASC")
+    private List<Comment> replies = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean isDeleted;
