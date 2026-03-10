@@ -1,0 +1,30 @@
+package com.miru.domain.user.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.miru.domain.user.entity.UserStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminUserListResponseDto {
+
+    private long totalCount;
+    private List<Item> items;
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Item {
+        private Long id;
+        private String nickname;
+        private UserStatus status;
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private LocalDateTime createdAt;
+    }
+}

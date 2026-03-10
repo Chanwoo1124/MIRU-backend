@@ -70,4 +70,14 @@ public class User extends BaseEntity {
         this.deleteAt = null;
     }
 
+    /** 관리자 - 유저 정지 처리 */
+    public void ban() {
+        this.status = UserStatus.BAN;
+    }
+
+    /** 관리자 - 유저 정지 해제 */
+    public void unban() {
+        this.status = UserStatus.ACTIVE;
+    }
+
 }
