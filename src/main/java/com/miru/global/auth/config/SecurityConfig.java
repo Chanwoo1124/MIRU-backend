@@ -73,7 +73,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> {
                     CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                    csrfTokenRepository.setCookieDomain("nip.io");
                     csrf.csrfTokenRepository(csrfTokenRepository)
                         .csrfTokenRequestHandler(new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler())
                         .ignoringRequestMatchers("/h2-console/**");
