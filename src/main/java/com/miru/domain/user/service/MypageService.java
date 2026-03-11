@@ -2,6 +2,7 @@ package com.miru.domain.user.service;
 
 import com.miru.domain.analysis.entity.AnswerStatus;
 import com.miru.domain.analysis.repository.AnswerRepository;
+import com.miru.domain.analysis.repository.QuestionRepository;
 import com.miru.domain.board.entity.Board;
 import com.miru.domain.board.entity.Comment;
 import com.miru.domain.board.repository.BoardRepository;
@@ -33,6 +34,7 @@ public class MypageService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
 
     /** 마이페이지 기본 정보 조회 */
     public MypageResponseDto getMypage(SessionUser sessionUser) {
@@ -43,10 +45,12 @@ public class MypageService {
 
         long inProgressCount = answerRepository.countByUserIdAndStatus(user.getId(), AnswerStatus.IN_PROGRESS);
         long completedCount = answerRepository.countByUserIdAndStatus(user.getId(), AnswerStatus.COMPLETED);
+        long totalQuestions = questionRepository.count();
+        long notStartedCount = totalQuestions - inProgressCount - completedCount;
         long articleCount = boardRepository.countByUserId(user.getId());
         long commentCount = commentRepository.countByUserIdAndIsDeletedFalse(user.getId());
 
-        MypageResponseDto.AnalysisStats analysisStats = new MypageResponseDto.AnalysisStats(inProgressCount, completedCount);
+        MypageResponseDto.AnalysisStats analysisStats = new MypageResponseDto.AnalysisStats(notStartedCount, inProgressCount, completedCount);
         MypageResponseDto.PostStats postStats = new MypageResponseDto.PostStats(articleCount, commentCount);
         MypageResponseDto.Item item = new MypageResponseDto.Item(user.getNickname(), analysisStats, postStats);
 
@@ -87,9 +91,9 @@ public class MypageService {
         return new MypageCommentListResponseDto(commentPage.getTotalElements(), items);
     }
 
-    /** 닉네임 변경 */
+    /** 닉네임 변경 - 변경된 닉네임 반환 */
     @Transactional
-    public void updateNickname(SessionUser sessionUser, NicknameUpdateRequestDto dto) {
+    public String updateNickname(SessionUser sessionUser, NicknameUpdateRequestDto dto) {
         if (sessionUser == null) throw new BusinessException(ErrorType.UNAUTHORIZED);
 
         // 중복 닉네임 체크 (본인 닉네임 제외)
@@ -101,6 +105,7 @@ public class MypageService {
                 .orElseThrow(() -> new BusinessException(ErrorType.USER_NOT_FOUND));
 
         user.updateNickname(dto.getNickname());
+        return user.getNickname();
     }
 
     /** 회원 탈퇴 (소프트 삭제 + 세션 무효화) */

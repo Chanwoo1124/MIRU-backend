@@ -26,6 +26,7 @@ public class MypageResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AnalysisStats {
+        private long notStartedCount;
         private long inProgressCount;
         private long completedCount;
     }
