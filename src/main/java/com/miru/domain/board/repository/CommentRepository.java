@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    /** 특정 게시글의 최상위 댓글 + 대댓글 fetch join 조회 (작성순) */
-    @Query("SELECT DISTINCT c FROM Comment c LEFT JOIN FETCH c.replies WHERE c.board.id = :boardId AND c.parent IS NULL ORDER BY c.createdAt ASC")
+    /** 특정 게시글의 최상위 댓글 + 대댓글 + 각 작성자 fetch join 조회 (작성순, N+1 방지) */
+    @Query("SELECT DISTINCT c FROM Comment c LEFT JOIN FETCH c.replies r LEFT JOIN FETCH c.user LEFT JOIN FETCH r.user WHERE c.board.id = :boardId AND c.parent IS NULL ORDER BY c.createdAt ASC")
     List<Comment> findTopCommentsWithReplies(@Param("boardId") Long boardId);
 
     /** 특정 유저의 댓글 목록 조회 - 삭제되지 않은 것만, 최신순 (board fetch join으로 N+1 방지) */

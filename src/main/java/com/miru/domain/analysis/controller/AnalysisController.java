@@ -25,7 +25,7 @@ public class AnalysisController {
     @GetMapping
     public ResponseEntity<ApiResponse<QuestionListResponseDto>> getQuestions(
             @LoginUser SessionUser sessionUser) {
-        log.info("GET /api/analysis - user: {}", sessionUser != null ? sessionUser.getEmail() : "비로그인");
+        log.info("GET /api/analysis - user: {}", sessionUser != null ? sessionUser != null ? sessionUser.getEmail() : "비로그인" : "비로그인");
         return ResponseEntity.ok(ApiResponse.success(analysisService.getQuestions(sessionUser)));
     }
 
@@ -35,7 +35,7 @@ public class AnalysisController {
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody AnswerSaveRequestDto dto) {
-        log.info("POST /api/analysis/{} - user: {}", id, sessionUser.getEmail());
+        log.info("POST /api/analysis/{} - user: {}", id, sessionUser != null ? sessionUser.getEmail() : "비로그인");
         return ResponseEntity.ok(ApiResponse.success("답변이 저장되었습니다.", analysisService.saveAnswer(id, sessionUser, dto)));
     }
 
@@ -44,7 +44,7 @@ public class AnalysisController {
     public ResponseEntity<ApiResponse<AnswerSaveResponseDto>> deleteAnswer(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser) {
-        log.info("DELETE /api/analysis/{} - user: {}", id, sessionUser.getEmail());
+        log.info("DELETE /api/analysis/{} - user: {}", id, sessionUser != null ? sessionUser.getEmail() : "비로그인");
         return ResponseEntity.ok(ApiResponse.success("답변이 삭제되었습니다.", analysisService.deleteAnswer(id, sessionUser)));
     }
 }

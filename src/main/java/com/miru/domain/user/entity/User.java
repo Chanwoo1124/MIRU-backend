@@ -70,6 +70,11 @@ public class User extends BaseEntity {
         this.deleteAt = null;
     }
 
+    /** 관리자 계정으로 승격 */
+    public void promoteToAdmin() {
+        this.role = Role.ADMIN;
+    }
+
     /** 관리자 - 유저 정지 처리 */
     public void ban() {
         this.status = UserStatus.BAN;

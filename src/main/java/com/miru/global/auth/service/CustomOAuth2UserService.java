@@ -11,6 +11,7 @@ import com.miru.global.auth.dto.*;
 import com.miru.global.error.ErrorType;
 import com.miru.global.error.OAuth2BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -26,6 +27,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final UserAgreementRepository userAgreementRepository;
+
+    @Value("${app.admin-google-ids}")
+    private java.util.Set<String> adminGoogleIds;
 
     @Override
     @Transactional
@@ -77,6 +81,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String providerId = response.getProviderId();
         String email = response.getEmail();
 
+        // 관리자 구글 계정 여부 확인
+        boolean isAdmin = provider.equals("google") && adminGoogleIds.contains(providerId);
+
         // db에 등록된 유저 있는지 찾기
         User user = userRepository.findByLoginFromAndLoginFromId(provider, providerId);
 
@@ -100,7 +107,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .loginFromId(providerId)
                     .nickname(tempNickname)
                     .email(email)
-                    .role(Role.USER)
+                    .role(isAdmin ? Role.ADMIN : Role.USER)
                     .build();
 
             userRepository.save(newUser);
@@ -112,6 +119,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .user(newUser).agreementType(AgreementType.PRIVACY_POLICY).isAgreed(true).tosVersion("v1.0").build());
 
             user = newUser;
+        } else if (isAdmin && user.getRole() != Role.ADMIN) {
+            // 기존 유저인데 관리자 계정이면 ADMIN으로 업그레이드
+            user.promoteToAdmin();
         }
 
         return user;

@@ -57,9 +57,11 @@ public class MypageController {
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody NicknameUpdateRequestDto dto) {
         log.info("[닉네임 변경] userId={}, nickname={}", sessionUser != null ? sessionUser.getId() : "비로그인", dto.getNickname());
-        mypageService.updateNickname(sessionUser, dto);
-        return ResponseEntity.ok(ApiResponse.success("닉네임이 성공적으로 변경되었습니다.",
-                new java.util.HashMap<String, Object>() {{ put("items", Collections.emptyList()); }}));
+        String nickname = mypageService.updateNickname(sessionUser, dto);
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("nickname", nickname);
+        data.put("items", Collections.emptyList());
+        return ResponseEntity.ok(ApiResponse.success("닉네임이 성공적으로 변경되었습니다.", data));
     }
 
     /** 회원 탈퇴 */

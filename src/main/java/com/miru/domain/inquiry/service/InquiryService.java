@@ -43,7 +43,7 @@ public class InquiryService {
     public InquiryDetailResponseDto getInquiry(Long id, SessionUser sessionUser) {
         if (sessionUser == null) throw new BusinessException(ErrorType.UNAUTHORIZED);
 
-        InquiryBoard inquiry = inquiryRepository.findById(id)
+        InquiryBoard inquiry = inquiryRepository.findByIdWithAnswerAndAdmin(id)
                 .orElseThrow(() -> new BusinessException(ErrorType.INQUIRY_NOT_FOUND));
 
         if (!inquiry.getUser().getId().equals(sessionUser.getId())) {

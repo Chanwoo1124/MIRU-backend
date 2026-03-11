@@ -26,7 +26,7 @@ public class CommentController {
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody CommentUpdateRequestDto dto) {
-        log.info("PATCH /api/comments/{} - user: {}", id, sessionUser.getEmail());
+        log.info("PATCH /api/comments/{} - user: {}", id, sessionUser != null ? sessionUser.getEmail() : "비로그인");
         return ResponseEntity.ok(ApiResponse.success("댓글이 수정되었습니다.", boardService.updateComment(id, sessionUser, dto)));
     }
 
@@ -35,7 +35,7 @@ public class CommentController {
     public ResponseEntity<ApiResponse<BoardDetailResponseDto>> deleteComment(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser) {
-        log.info("DELETE /api/comments/{} - user: {}", id, sessionUser.getEmail());
+        log.info("DELETE /api/comments/{} - user: {}", id, sessionUser != null ? sessionUser.getEmail() : "비로그인");
         return ResponseEntity.ok(ApiResponse.success("댓글이 삭제되었습니다.", boardService.deleteComment(id, sessionUser)));
     }
 }
