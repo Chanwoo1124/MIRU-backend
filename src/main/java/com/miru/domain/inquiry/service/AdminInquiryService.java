@@ -1,5 +1,7 @@
 package com.miru.domain.inquiry.service;
 
+import com.miru.domain.alarm.entity.AlarmType;
+import com.miru.domain.alarm.service.AlarmService;
 import com.miru.domain.inquiry.dto.AdminInquiryAnswerRequestDto;
 import com.miru.domain.inquiry.dto.AdminInquiryDetailResponseDto;
 import com.miru.domain.inquiry.dto.AdminInquiryListResponseDto;
@@ -27,6 +29,7 @@ public class AdminInquiryService {
     private final InquiryRepository inquiryRepository;
     private final InquiryAnswerRepository inquiryAnswerRepository;
     private final UserRepository userRepository;
+    private final AlarmService alarmService;
 
     /** 전체 문의 목록 조회 */
     public AdminInquiryListResponseDto getInquiries() {
@@ -102,5 +105,10 @@ public class AdminInquiryService {
 
         // 문의 상태 WAITING → COMPLETED 변경
         inquiry.complete();
+
+        // 문의 작성자에게 알람
+        alarmService.createAlarm(
+                inquiry.getUser(), admin, AlarmType.INQUIRY,
+                "문의하신 내용에 답변이 등록되었습니다.", "/inquiries/" + id);
     }
 }

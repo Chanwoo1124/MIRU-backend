@@ -2,7 +2,10 @@ package com.miru.domain.board.service;
 
 import com.miru.domain.board.dto.*;
 import com.miru.domain.board.entity.Board;
+import com.miru.domain.alarm.entity.AlarmType;
+import com.miru.domain.alarm.service.AlarmService;
 import com.miru.domain.board.entity.BoardType;
+import com.miru.domain.user.entity.Role;
 import com.miru.domain.board.entity.Comment;
 import com.miru.domain.board.repository.BoardLikeRepository;
 import com.miru.domain.board.repository.BoardRepository;
@@ -32,6 +35,7 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final UserRepository userRepository;
+    private final AlarmService alarmService;
 
     /** 게시글 전체 목록 조회 (NOTICE 고정, 10개씩 페이징) */
     public BoardListResponseDto getBoards(int page) {
@@ -71,11 +75,14 @@ public class BoardService {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new BusinessException(ErrorType.USER_NOT_FOUND));
 
+        // 관리자가 작성하면 자동으로 공지글로 설정 (세션이 아닌 DB role로 확인)
+        BoardType type = user.getRole() == Role.ADMIN ? BoardType.NOTICE : BoardType.GENERAL;
+
         Board board = Board.builder()
                 .user(user)
                 .title(dto.getTitle())
                 .content(dto.getContent())
-                .type(BoardType.GENERAL)
+                .type(type)
                 .build();
         boardRepository.save(board);
 
@@ -159,6 +166,20 @@ public class BoardService {
                 .build();
         commentRepository.save(comment);
         board.incrementCommentCount();
+
+        // 알람 생성
+        String targetUrl = "/boards/" + boardId;
+        if (parent == null) {
+            // 일반 댓글: 게시글 작성자에게 알람
+            alarmService.createAlarm(
+                    board.getUser(), user, AlarmType.COMMENT,
+                    user.getNickname() + "님이 게시글에 댓글을 달았습니다.", targetUrl);
+        } else {
+            // 대댓글: 원댓글 작성자에게 알람
+            alarmService.createAlarm(
+                    parent.getUser(), user, AlarmType.COMMENT,
+                    user.getNickname() + "님이 댓글에 답글을 달았습니다.", targetUrl);
+        }
 
         boolean isLiked = boardLikeRepository.existsByUserIdAndBoardId(sessionUser.getId(), boardId);
         return buildDetailResponse(board, isLiked);
