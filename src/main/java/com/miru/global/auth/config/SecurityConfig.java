@@ -1,6 +1,7 @@
 package com.miru.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miru.global.auth.filter.BanRestrictionFilter;
 import com.miru.global.auth.filter.PendingUserFilter;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final PendingUserFilter pendingUserFilter;
+    private final BanRestrictionFilter banRestrictionFilter;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -161,6 +163,8 @@ public class SecurityConfig {
 
         // PENDING 유저 접근 제한 필터 등록
         http.addFilterAfter(pendingUserFilter, UsernamePasswordAuthenticationFilter.class);
+        // BAN 유저 게시글/댓글 작성 제한 필터 등록
+        http.addFilterAfter(banRestrictionFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
