@@ -1,8 +1,5 @@
 package com.miru.global.auth.service;
 
-import com.miru.domain.agreements.entity.AgreementType;
-import com.miru.domain.agreements.entity.UserAgreement;
-import com.miru.domain.agreements.repository.UserAgreementRepository;
 import com.miru.domain.user.entity.Role;
 import com.miru.domain.user.entity.User;
 import com.miru.domain.user.entity.UserStatus;
@@ -26,7 +23,6 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-    private final UserAgreementRepository userAgreementRepository;
 
     @Value("${app.admin-google-ids}")
     private java.util.Set<String> adminGoogleIds;
@@ -111,12 +107,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .build();
 
             userRepository.save(newUser);
-
-            // 약관 동의 저장 (이용약관, 개인정보처리방침)
-            userAgreementRepository.save(UserAgreement.builder()
-                    .user(newUser).agreementType(AgreementType.TERMS_OF_SERVICE).isAgreed(true).tosVersion("v1.0").build());
-            userAgreementRepository.save(UserAgreement.builder()
-                    .user(newUser).agreementType(AgreementType.PRIVACY_POLICY).isAgreed(true).tosVersion("v1.0").build());
 
             user = newUser;
         } else if (isAdmin && user.getRole() != Role.ADMIN) {

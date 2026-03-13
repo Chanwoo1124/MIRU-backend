@@ -1,6 +1,7 @@
 package com.miru.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miru.global.auth.filter.PendingUserFilter;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.miru.global.auth.service.CustomOAuth2UserService;
@@ -18,6 +19,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,6 +35,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final PendingUserFilter pendingUserFilter;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -121,6 +124,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/boards", "/api/boards/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/boards/{id}").permitAll()
 
+                        // 약관 동의 API (PENDING 유저도 접근 가능)
+                        .requestMatchers("/api/agreements").authenticated()
+
                         // 로그인 유저 정보 조회
                         .requestMatchers("/api/me").authenticated()
 
@@ -152,6 +158,9 @@ public class SecurityConfig {
                         // 세션 및 쿠키 삭제
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID", "XSRF-TOKEN"));
+
+        // PENDING 유저 접근 제한 필터 등록
+        http.addFilterAfter(pendingUserFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
