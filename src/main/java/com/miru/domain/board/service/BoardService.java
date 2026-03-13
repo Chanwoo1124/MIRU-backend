@@ -6,6 +6,7 @@ import com.miru.domain.alarm.entity.AlarmType;
 import com.miru.domain.alarm.service.AlarmService;
 import com.miru.domain.board.entity.BoardType;
 import com.miru.domain.user.entity.Role;
+import com.miru.domain.user.entity.UserStatus;
 import com.miru.domain.board.entity.Comment;
 import com.miru.domain.board.repository.BoardLikeRepository;
 import com.miru.domain.board.repository.BoardRepository;
@@ -44,7 +45,7 @@ public class BoardService {
 
         List<BoardListResponseDto.Item> items = boardPage.getContent().stream()
                 .map(b -> new BoardListResponseDto.Item(
-                        b.getId(), b.getType(), b.getTitle(), b.getUser().getNickname(),
+                        b.getId(), b.getType(), b.getTitle(), getWriterName(b.getUser()),
                         b.getCommentCount(), b.getLikeCount(), b.getViewCount(), b.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
@@ -59,7 +60,7 @@ public class BoardService {
 
         List<BoardListResponseDto.Item> items = boardPage.getContent().stream()
                 .map(b -> new BoardListResponseDto.Item(
-                        b.getId(), b.getType(), b.getTitle(), b.getUser().getNickname(),
+                        b.getId(), b.getType(), b.getTitle(), getWriterName(b.getUser()),
                         b.getCommentCount(), b.getLikeCount(), b.getViewCount(), b.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
@@ -227,6 +228,11 @@ public class BoardService {
         return buildDetailResponse(board, isLiked);
     }
 
+    /** 탈퇴 유저는 "탈퇴한 사용자"로 익명 처리 */
+    private String getWriterName(User user) {
+        return user.getStatus() == UserStatus.DELETE ? "탈퇴한 사용자" : user.getNickname();
+    }
+
     /** 상세 응답 DTO 빌드 (공통) */
     private BoardDetailResponseDto buildDetailResponse(Board board, boolean isLiked) {
         // fetch join으로 최상위 댓글 + 대댓글 한 번에 조회 (N+1 방지)
@@ -236,17 +242,17 @@ public class BoardService {
                 .map(c -> {
                     List<BoardDetailResponseDto.ReplyItem> replyItems = c.getReplies().stream()
                             .map(r -> new BoardDetailResponseDto.ReplyItem(
-                                    r.getId(), r.getUser().getNickname(), r.getContent(), r.getCreatedAt()
+                                    r.getId(), getWriterName(r.getUser()), r.getContent(), r.getCreatedAt()
                             ))
                             .collect(Collectors.toList());
                     return new BoardDetailResponseDto.CommentItem(
-                            c.getId(), c.getUser().getNickname(), c.getContent(), c.getCreatedAt(), replyItems
+                            c.getId(), getWriterName(c.getUser()), c.getContent(), c.getCreatedAt(), replyItems
                     );
                 })
                 .collect(Collectors.toList());
 
         BoardDetailResponseDto.Item item = new BoardDetailResponseDto.Item(
-                board.getId(), board.getTitle(), board.getContent(), board.getUser().getNickname(),
+                board.getId(), board.getTitle(), board.getContent(), getWriterName(board.getUser()),
                 board.getViewCount(), board.getLikeCount(), board.getCommentCount(), isLiked, board.getCreatedAt(), commentItems
         );
 

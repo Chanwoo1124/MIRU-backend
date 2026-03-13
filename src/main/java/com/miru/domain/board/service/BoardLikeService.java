@@ -7,6 +7,7 @@ import com.miru.domain.board.repository.BoardLikeRepository;
 import com.miru.domain.board.repository.BoardRepository;
 import com.miru.domain.board.repository.CommentRepository;
 import com.miru.domain.user.entity.User;
+import com.miru.domain.user.entity.UserStatus;
 import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.SessionUser;
 import com.miru.global.error.BusinessException;
@@ -55,20 +56,25 @@ public class BoardLikeService {
                 .map(c -> {
                     List<BoardDetailResponseDto.ReplyItem> replyItems = c.getReplies().stream()
                             .map(r -> new BoardDetailResponseDto.ReplyItem(
-                                    r.getId(), r.getUser().getNickname(), r.getContent(), r.getCreatedAt()
+                                    r.getId(), getWriterName(r.getUser()), r.getContent(), r.getCreatedAt()
                             ))
                             .collect(Collectors.toList());
                     return new BoardDetailResponseDto.CommentItem(
-                            c.getId(), c.getUser().getNickname(), c.getContent(), c.getCreatedAt(), replyItems
+                            c.getId(), getWriterName(c.getUser()), c.getContent(), c.getCreatedAt(), replyItems
                     );
                 })
                 .collect(Collectors.toList());
 
         BoardDetailResponseDto.Item item = new BoardDetailResponseDto.Item(
-                board.getId(), board.getTitle(), board.getContent(), board.getUser().getNickname(),
+                board.getId(), board.getTitle(), board.getContent(), getWriterName(board.getUser()),
                 board.getViewCount(), board.getLikeCount(), board.getCommentCount(), isLiked, board.getCreatedAt(), commentItems
         );
 
         return new BoardDetailResponseDto(List.of(item));
+    }
+
+    /** 탈퇴 유저는 "탈퇴한 사용자"로 익명 처리 */
+    private String getWriterName(User user) {
+        return user.getStatus() == UserStatus.DELETE ? "탈퇴한 사용자" : user.getNickname();
     }
 }
