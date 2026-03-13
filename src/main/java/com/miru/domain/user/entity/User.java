@@ -50,7 +50,7 @@ public class User extends BaseEntity {
         this.loginFrom = loginFrom;
         this.loginFromId = loginFromId;
         this.role = role;
-        this.status = UserStatus.ACTIVE;
+        this.status = UserStatus.PENDING;
     }
 
     /** 닉네임 변경 */
@@ -64,9 +64,14 @@ public class User extends BaseEntity {
         this.deleteAt = LocalDate.now();
     }
 
-    /** 탈퇴 유저 재가입 시 계정 초기화 */
-    public void reactivate() {
+    /** 약관 동의 완료 후 계정 활성화 */
+    public void activate() {
         this.status = UserStatus.ACTIVE;
+    }
+
+    /** 탈퇴 유저 재가입 시 계정 초기화 (약관 재동의 필요) */
+    public void reactivate() {
+        this.status = UserStatus.PENDING;
         this.deleteAt = null;
     }
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum UserStatus {
 
+    PENDING("가입 대기"),
     ACTIVE("정상"),
     BAN("정지"),
     DELETE("탈퇴");
