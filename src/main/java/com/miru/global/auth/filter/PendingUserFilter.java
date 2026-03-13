@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,6 +55,17 @@ public class PendingUserFilter extends OncePerRequestFilter {
         String status = oAuth2User.getStatus();
         String requestUri = request.getRequestURI();
 
+        // DELETE 유저: 세션 강제 무효화 후 401 반환
+        if ("DELETE".equals(status)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            SecurityContextHolder.clearContext();
+            sendUnauthorizedResponse(response, "탈퇴한 계정입니다. 다시 로그인해 주세요.");
+            return;
+        }
+
         // PENDING 유저가 허용되지 않은 경로에 접근하면 차단
         if ("PENDING".equals(status) && isNotAllowedForPending(requestUri)) {
             sendForbiddenResponse(response, "약관 동의가 필요합니다.");
@@ -69,6 +81,12 @@ public class PendingUserFilter extends OncePerRequestFilter {
 
     private void sendForbiddenResponse(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+        objectMapper.writeValue(response.getWriter(), ApiResponse.error(message));
+    }
+
+    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), ApiResponse.error(message));
     }
