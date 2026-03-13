@@ -1,6 +1,7 @@
 package com.miru.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miru.global.auth.filter.BanRestrictionFilter;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.miru.global.auth.service.CustomOAuth2UserService;
@@ -18,6 +19,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,6 +35,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final BanRestrictionFilter banRestrictionFilter;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -152,6 +155,9 @@ public class SecurityConfig {
                         // 세션 및 쿠키 삭제
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID", "XSRF-TOKEN"));
+
+        // BAN 유저 게시글/댓글 작성 제한 필터 등록
+        http.addFilterAfter(banRestrictionFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

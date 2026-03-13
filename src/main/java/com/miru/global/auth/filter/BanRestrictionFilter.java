@@ -1,0 +1,80 @@
+package com.miru.global.auth.filter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miru.global.auth.dto.CustomOAuth2User;
+import com.miru.global.common.ApiResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+public class BanRestrictionFilter extends OncePerRequestFilter {
+
+    private final ObjectMapper objectMapper;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증되지 않은 요청은 통과
+        if (authentication == null || !authentication.isAuthenticated()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // OAuth2 유저가 아닌 경우 통과
+        if (!(authentication.getPrincipal() instanceof CustomOAuth2User oAuth2User)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // BAN 유저가 게시글/댓글 작성 시도 시 차단
+        if ("BAN".equals(oAuth2User.getStatus()) && isBannedOperation(request)) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+            objectMapper.writeValue(response.getWriter(), ApiResponse.error("정지된 계정입니다."));
+            return;
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    /**
+     * BAN 유저에게 차단되는 작업 여부 확인
+     * - POST /api/boards : 게시글 작성
+     * - POST /api/boards/{id}/comment : 댓글 작성
+     */
+    private boolean isBannedOperation(HttpServletRequest request) {
+        if (!HttpMethod.POST.matches(request.getMethod())) {
+            return false;
+        }
+
+        String uri = request.getRequestURI();
+
+        // 게시글 작성: POST /api/boards (정확히)
+        if (uri.equals("/api/boards")) {
+            return true;
+        }
+
+        // 댓글 작성: POST /api/boards/{id}/comment
+        if (uri.matches("/api/boards/\\d+/comment")) {
+            return true;
+        }
+
+        return false;
+    }
+}
