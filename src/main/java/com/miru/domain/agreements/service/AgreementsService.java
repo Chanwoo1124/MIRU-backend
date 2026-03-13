@@ -4,6 +4,7 @@ import com.miru.domain.agreements.entity.AgreementType;
 import com.miru.domain.agreements.entity.UserAgreement;
 import com.miru.domain.agreements.repository.UserAgreementRepository;
 import com.miru.domain.user.entity.User;
+import com.miru.domain.user.entity.UserStatus;
 import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.SessionUser;
 import com.miru.global.error.BusinessException;
@@ -30,6 +31,11 @@ public class AgreementsService {
     public void agree(SessionUser sessionUser) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new BusinessException(ErrorType.USER_NOT_FOUND));
+
+        // PENDING 상태가 아닌 유저는 약관 동의 불가 (ACTIVE 재호출, BAN 우회 방지)
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new BusinessException(ErrorType.FORBIDDEN);
+        }
 
         // 약관 동의 저장 (이용약관, 개인정보처리방침)
         userAgreementRepository.save(UserAgreement.builder()
