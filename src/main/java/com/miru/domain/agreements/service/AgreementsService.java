@@ -6,6 +6,8 @@ import com.miru.domain.agreements.repository.UserAgreementRepository;
 import com.miru.domain.user.entity.User;
 import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.SessionUser;
+import com.miru.global.error.BusinessException;
+import com.miru.global.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class AgreementsService {
     @Transactional
     public void agree(SessionUser sessionUser) {
         User user = userRepository.findById(sessionUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorType.USER_NOT_FOUND));
 
         // 약관 동의 저장 (이용약관, 개인정보처리방침)
         userAgreementRepository.save(UserAgreement.builder()
