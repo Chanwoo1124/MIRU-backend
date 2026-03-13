@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -42,8 +43,23 @@ public class BanRestrictionFilter extends OncePerRequestFilter {
             return;
         }
 
+        String status = oAuth2User.getStatus();
+
+        // DELETE 유저: 세션 강제 무효화 후 401 반환
+        if ("DELETE".equals(status)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+            objectMapper.writeValue(response.getWriter(), ApiResponse.error("탈퇴한 계정입니다. 다시 로그인해 주세요."));
+            return;
+        }
+
         // BAN 유저가 게시글/댓글 작성 시도 시 차단
-        if ("BAN".equals(oAuth2User.getStatus()) && isBannedOperation(request)) {
+        if ("BAN".equals(status) && isBannedOperation(request)) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
             objectMapper.writeValue(response.getWriter(), ApiResponse.error("정지된 계정입니다."));
