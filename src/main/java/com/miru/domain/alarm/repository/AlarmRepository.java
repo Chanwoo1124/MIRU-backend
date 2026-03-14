@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
-    /** 특정 유저의 알람 목록 조회 (최신순, sender fetch join으로 N+1 방지) */
-    @Query(value = "SELECT a FROM Alarm a JOIN FETCH a.sender WHERE a.receiveUser.id = :userId ORDER BY a.createdAt DESC",
-           countQuery = "SELECT COUNT(a) FROM Alarm a WHERE a.receiveUser.id = :userId")
+    /** 특정 유저의 읽지 않은 알람 목록 조회 (최신순, sender fetch join으로 N+1 방지) */
+    @Query(value = "SELECT a FROM Alarm a JOIN FETCH a.sender WHERE a.receiveUser.id = :userId AND a.isRead = false ORDER BY a.createdAt DESC",
+           countQuery = "SELECT COUNT(a) FROM Alarm a WHERE a.receiveUser.id = :userId AND a.isRead = false")
     Page<Alarm> findByReceiveUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
     /** 읽지 않은 알람 존재 여부 */

@@ -129,7 +129,10 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BusinessException(ErrorType.BOARD_NOT_FOUND));
 
-        if (!board.getUser().getId().equals(sessionUser.getId())) {
+        boolean isOwner = board.getUser().getId().equals(sessionUser.getId());
+        boolean isAdmin = "ADMIN".equals(sessionUser.getRole());
+
+        if (!isOwner && !isAdmin) {
             throw new BusinessException(ErrorType.FORBIDDEN);
         }
 
@@ -217,7 +220,10 @@ public class BoardService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException(ErrorType.COMMENT_NOT_FOUND));
 
-        if (!comment.getUser().getId().equals(sessionUser.getId())) {
+        boolean isOwner = comment.getUser().getId().equals(sessionUser.getId());
+        boolean isAdmin = "ADMIN".equals(sessionUser.getRole());
+
+        if (!isOwner && !isAdmin) {
             throw new BusinessException(ErrorType.FORBIDDEN);
         }
 
