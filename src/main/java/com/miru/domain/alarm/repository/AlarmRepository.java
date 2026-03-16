@@ -13,7 +13,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     /** 특정 유저의 읽지 않은 알람 목록 조회 (최신순, sender fetch join으로 N+1 방지) */
     @Query(value = "SELECT a FROM Alarm a JOIN FETCH a.sender WHERE a.receiveUser.id = :userId AND a.isRead = false ORDER BY a.createdAt DESC",
            countQuery = "SELECT COUNT(a) FROM Alarm a WHERE a.receiveUser.id = :userId AND a.isRead = false")
-    Page<Alarm> findByReceiveUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
+    Page<Alarm> findUnreadByReceiveUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
     /** 알람 단건 조회 (본인 알람인지 확인용) */
     java.util.Optional<Alarm> findByIdAndReceiveUserId(Long alarmId, Long userId);

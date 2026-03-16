@@ -29,7 +29,7 @@ public class AlarmService {
     public AlarmListResponseDto getAlarms(SessionUser sessionUser, int page) {
         if (sessionUser == null) throw new BusinessException(ErrorType.UNAUTHORIZED);
 
-        Page<Alarm> alarmPage = alarmRepository.findByReceiveUserIdOrderByCreatedAtDesc(
+        Page<Alarm> alarmPage = alarmRepository.findUnreadByReceiveUserIdOrderByCreatedAtDesc(
                 sessionUser.getId(), PageRequest.of(page, 10));
 
         List<AlarmListResponseDto.Item> items = alarmPage.getContent().stream()
