@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "user_agreements", uniqueConstraints = {
-        // 한 유저가 같은 버전의 약관에 중복 동의 방지
-        @UniqueConstraint(name = "uk_agreement_user_type_version", columnNames = {"user_id", "agreement_type", "tos_version"})
-})
+@Table(name = "user_agreements")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserAgreement extends BaseEntity {
 
