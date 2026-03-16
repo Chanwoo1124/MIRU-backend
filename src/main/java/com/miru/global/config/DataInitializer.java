@@ -35,12 +35,14 @@ public class DataInitializer implements ApplicationRunner {
         List<User> users = new ArrayList<>();
         String[] nicknames = {"김철수", "이영희", "박민준", "최지은", "정우성", "한소희", "오태양", "임수진", "강동원", "윤아름"};
         for (int i = 0; i < 10; i++) {
+            // 첫 번째 유저(김철수)는 관리자로 생성
+            Role role = (i == 0) ? Role.ADMIN : Role.USER;
             User u = User.builder()
                     .email("test" + (i + 1) + "@miru.com")
                     .nickname(nicknames[i])
                     .loginFrom("google")
                     .loginFromId("test-google-id-" + (i + 1))
-                    .role(Role.USER)
+                    .role(role)
                     .build();
             users.add(userRepository.save(u));
         }

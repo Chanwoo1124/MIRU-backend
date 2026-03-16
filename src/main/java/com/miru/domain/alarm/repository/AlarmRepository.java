@@ -15,6 +15,9 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
            countQuery = "SELECT COUNT(a) FROM Alarm a WHERE a.receiveUser.id = :userId AND a.isRead = false")
     Page<Alarm> findByReceiveUserIdOrderByCreatedAtDesc(@Param("userId") Long userId, Pageable pageable);
 
+    /** 알람 단건 조회 (본인 알람인지 확인용) */
+    java.util.Optional<Alarm> findByIdAndReceiveUserId(Long alarmId, Long userId);
+
     /** 읽지 않은 알람 존재 여부 */
     boolean existsByReceiveUserIdAndIsReadFalse(Long userId);
 

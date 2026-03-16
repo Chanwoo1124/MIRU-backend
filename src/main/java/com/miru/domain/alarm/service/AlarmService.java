@@ -55,6 +55,17 @@ public class AlarmService {
         return new AlarmHasUnreadResponseDto(hasUnread);
     }
 
+    /** 단건 읽음 처리 */
+    @Transactional
+    public void readOne(SessionUser sessionUser, Long alarmId) {
+        if (sessionUser == null) throw new BusinessException(ErrorType.UNAUTHORIZED);
+
+        Alarm alarm = alarmRepository.findByIdAndReceiveUserId(alarmId, sessionUser.getId())
+                .orElseThrow(() -> new BusinessException(ErrorType.UNAUTHORIZED));
+
+        alarm.read();
+    }
+
     /** 전체 읽음 처리 */
     @Transactional
     public void readAll(SessionUser sessionUser) {

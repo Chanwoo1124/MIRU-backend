@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 
 @Slf4j
 @RestController
@@ -41,24 +40,22 @@ public class AdminInquiryController {
     }
 
     /** 관리자 답변 삭제 */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/answer")
     public ResponseEntity<ApiResponse<Object>> deleteAnswer(
             @PathVariable Long id) {
         log.info("[관리자 답변 삭제] inquiryId={}", id);
         adminInquiryService.deleteAnswer(id);
-        return ResponseEntity.ok(ApiResponse.success("답변이 삭제되었습니다.",
-                new java.util.HashMap<String, Object>() {{ put("items", Collections.emptyList()); }}));
+        return ResponseEntity.ok(ApiResponse.success("답변이 삭제되었습니다.", null));
     }
 
     /** 관리자 답변 등록 */
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/answer")
     public ResponseEntity<ApiResponse<Object>> createAnswer(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser,
             @Valid @RequestBody AdminInquiryAnswerRequestDto dto) {
         log.info("[관리자 답변 등록] inquiryId={}, adminId={}", id, sessionUser.getId());
         adminInquiryService.createAnswer(id, sessionUser, dto);
-        return ResponseEntity.ok(ApiResponse.success("답변이 성공적으로 등록되었습니다.",
-                new java.util.HashMap<String, Object>() {{ put("items", Collections.emptyList()); }}));
+        return ResponseEntity.ok(ApiResponse.success("답변이 성공적으로 등록되었습니다.", null));
     }
 }

@@ -78,7 +78,8 @@ public class AdminInquiryService {
             throw new BusinessException(ErrorType.INQUIRY_ANSWER_NOT_FOUND);
         }
 
-        inquiryAnswerRepository.delete(inquiry.getAnswer());
+        // answer를 null로 설정하면 orphanRemoval에 의해 자동 삭제됨
+        inquiry.clearAnswer();
         inquiry.reopen();
     }
 
@@ -99,7 +100,7 @@ public class AdminInquiryService {
         InquiryAnswer answer = InquiryAnswer.builder()
                 .inquiryBoard(inquiry)
                 .admin(admin)
-                .content(dto.getContent())
+                .content(dto.getAnswerContent())
                 .build();
         inquiryAnswerRepository.save(answer);
 

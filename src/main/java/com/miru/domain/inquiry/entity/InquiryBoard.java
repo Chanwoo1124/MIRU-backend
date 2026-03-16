@@ -54,4 +54,9 @@ public class InquiryBoard extends BaseEntity {
     public void reopen() {
         this.status = WAITING;
     }
+
+    /** 답변 참조 제거 - orphanRemoval에 의해 DB에서도 자동 삭제됨 */
+    public void clearAnswer() {
+        this.answer = null;
+    }
 }

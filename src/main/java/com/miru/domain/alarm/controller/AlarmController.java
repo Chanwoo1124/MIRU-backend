@@ -38,6 +38,16 @@ public class AlarmController {
         return ResponseEntity.ok(ApiResponse.success("읽지 않은 알람 여부를 확인했습니다.", response));
     }
 
+    /** 단건 읽음 처리 (x 버튼 클릭 시) */
+    @PatchMapping("/{alarmId}/read")
+    public ResponseEntity<ApiResponse<Object>> readOne(
+            @LoginUser SessionUser sessionUser,
+            @PathVariable Long alarmId) {
+        log.info("[단건 읽음 처리] userId={}, alarmId={}", sessionUser != null ? sessionUser.getId() : "비로그인", alarmId);
+        alarmService.readOne(sessionUser, alarmId);
+        return ResponseEntity.ok(ApiResponse.success("알람을 읽음 처리했습니다.", null));
+    }
+
     /** 전체 읽음 처리 (종 클릭 시) */
     @PatchMapping("/read-all")
     public ResponseEntity<ApiResponse<Object>> readAll(

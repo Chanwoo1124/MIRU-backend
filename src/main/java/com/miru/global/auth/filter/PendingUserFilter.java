@@ -1,6 +1,8 @@
 package com.miru.global.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miru.domain.user.entity.User;
+import com.miru.domain.user.repository.UserRepository;
 import com.miru.global.auth.dto.CustomOAuth2User;
 import com.miru.global.common.ApiResponse;
 import jakarta.servlet.FilterChain;
@@ -18,12 +20,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class PendingUserFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
 
     /** PENDING 유저가 접근 가능한 경로 목록 */
     private static final List<String> PENDING_ALLOWED_PATHS = List.of(
@@ -52,7 +56,13 @@ public class PendingUserFilter extends OncePerRequestFilter {
             return;
         }
 
-        String status = oAuth2User.getStatus();
+        // DB에서 최신 상태 조회 (세션 캐시 무시)
+        Optional<User> userOpt = userRepository.findById(oAuth2User.getSessionUser().getId());
+        if (userOpt.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String status = userOpt.get().getStatus().name();
         String requestUri = request.getRequestURI();
 
         // DELETE 유저: 세션 강제 무효화 후 401 반환
