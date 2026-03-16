@@ -95,11 +95,10 @@ public class DataInitializer implements ApplicationRunner {
             questionRepository.save(new Question(questions[i], i + 1));
         }
 
-        // ── 공지 게시글 3개 ──
+        // ── 공지 게시글 2개 ──
         String[][] notices = {
                 {"[공지] Miru 서비스 이용 안내", "안녕하세요. Miru 서비스 이용 안내입니다. 자기분석 페이지에서 40개의 질문에 답변하며 자신을 돌아보세요."},
-                {"[공지] 커뮤니티 이용 규칙 안내", "건전한 커뮤니티 문화를 위해 욕설, 비방, 광고성 게시글은 삭제될 수 있습니다. 서로 존중하는 분위기를 만들어 주세요."},
-                {"[공지] 개인정보처리방침 개정 안내", "2026년 3월 1일부로 개인정보처리방침이 일부 개정되었습니다. 상세 내용을 확인해 주세요."}
+                {"[공지] 커뮤니티 이용 규칙 안내", "건전한 커뮤니티 문화를 위해 욕설, 비방, 광고성 게시글은 삭제될 수 있습니다. 서로 존중하는 분위기를 만들어 주세요."}
         };
         for (String[] notice : notices) {
             boardRepository.save(Board.builder()
