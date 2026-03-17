@@ -48,3 +48,4 @@ jobs:
               --spring.datasource.username="$DB_USERNAME" \
               --spring.datasource.password="$DB_PASSWORD" \
               > ~/app.log 2>&1 &
+            disown
