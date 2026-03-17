@@ -39,6 +39,12 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
+          envs: DB_URL=${{ secrets.DB_URL }},DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           script: |
             pkill -f 'java -jar' || true
-            nohup java -Xmx512m -jar ~/*-SNAPSHOT.jar --spring.profiles.active=prod > ~/app.log 2>&1 &
+            nohup java -Xmx512m -jar ~/*-SNAPSHOT.jar \
+              --spring.profiles.active=prod \
+              --spring.datasource.url="$DB_URL" \
+              --spring.datasource.username="$DB_USERNAME" \
+              --spring.datasource.password="$DB_PASSWORD" \
+              > ~/app.log 2>&1 &
