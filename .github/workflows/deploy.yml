@@ -42,10 +42,11 @@ jobs:
           envs: DB_URL=${{ secrets.DB_URL }},DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           script: |
             pkill -f 'java -jar' || true
+            sleep 2
             nohup java -Xmx512m -jar ~/*-SNAPSHOT.jar \
               --spring.profiles.active=prod \
               --spring.datasource.url="$DB_URL" \
               --spring.datasource.username="$DB_USERNAME" \
               --spring.datasource.password="$DB_PASSWORD" \
-              > ~/app.log 2>&1 &
-            disown
+              < /dev/null > ~/app.log 2>&1 &
+            echo "배포 완료 PID: $!"
