@@ -34,31 +34,12 @@ jobs:
 
       - name: EC2 서버 실행
         uses: appleboy/ssh-action@v1.0.0
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-          ADMIN_GOOGLE_IDS: ${{ secrets.ADMIN_GOOGLE_IDS }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          envs: DB_URL,DB_USERNAME,DB_PASSWORD,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,FRONTEND_URL,ADMIN_GOOGLE_IDS
           script: |
-            pkill -f 'java -jar' || true
-            sleep 2
-            setsid nohup java -Xmx512m -jar ~/*-SNAPSHOT.jar \
-              --spring.profiles.active=prod \
-              --spring.datasource.url="$DB_URL" \
-              --spring.datasource.username="$DB_USERNAME" \
-              --spring.datasource.password="$DB_PASSWORD" \
-              --spring.security.oauth2.client.registration.google.client-id="$GOOGLE_CLIENT_ID" \
-              --spring.security.oauth2.client.registration.google.client-secret="$GOOGLE_CLIENT_SECRET" \
-              --app.frontend-url="$FRONTEND_URL" \
-              --app.admin-google-ids="$ADMIN_GOOGLE_IDS" \
-              < /dev/null > ~/app.log 2>&1 &
-            echo "배포 완료 PID: $!"
+            sudo systemctl restart miru-backend
+            sleep 5
+            sudo systemctl status miru-backend --no-pager
