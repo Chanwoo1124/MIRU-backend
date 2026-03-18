@@ -5,6 +5,7 @@ import com.miru.global.auth.filter.BanRestrictionFilter;
 import com.miru.global.auth.filter.PendingUserFilter;
 import com.miru.global.auth.handler.OAuth2LoginFailureHandler;
 import com.miru.global.auth.handler.OAuth2LoginSuccessHandler;
+import com.miru.global.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.miru.global.auth.service.CustomOAuth2UserService;
 import com.miru.global.common.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,7 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final PendingUserFilter pendingUserFilter;
     private final BanRestrictionFilter banRestrictionFilter;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -98,6 +100,8 @@ public class SecurityConfig {
         // OAuth2 로그인 처리 필터
         http
                 .oauth2Login((oauth2) -> oauth2
+                        .authorizationEndpoint(endpoint ->
+                                endpoint.authorizationRequestRepository(cookieAuthorizationRequestRepository))
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfoEndpointConfig ->
@@ -141,6 +145,8 @@ public class SecurityConfig {
                         .requestMatchers("/", "/oauth/**", "/login/**").permitAll()
                         // H2 콘솔 (개발 환경)
                         .requestMatchers("/h2-console/**").permitAll()
+                        // Swagger UI
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated());
 
         // 로그아웃
