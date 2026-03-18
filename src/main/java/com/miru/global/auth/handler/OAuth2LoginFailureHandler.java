@@ -28,6 +28,8 @@ public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
+        log.error("OAuth2 로그인 실패: {}", exception.getMessage(), exception);
+
         ErrorType errorType = ErrorType.USER_NOT_FOUND;
 
         // 커스텀 예외인지 확인
