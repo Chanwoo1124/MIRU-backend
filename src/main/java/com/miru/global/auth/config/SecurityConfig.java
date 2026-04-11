@@ -29,6 +29,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+/**
+ * Spring Security 설정
+ *
+ * <p>전체 보안 정책을 설정한다:
+ * <ul>
+ *   <li>CORS: 모든 오리진 허용 (개발 환경), credentials 포함</li>
+ *   <li>CSRF: 쿠키 기반 토큰(XSRF-TOKEN), H2 콘솔 경로 예외 처리</li>
+ *   <li>OAuth2: Google/Naver/Kakao 소셜 로그인, 쿠키 기반 state 저장</li>
+ *   <li>인가: 관리자(/api/admin/**), 인증 필요(/api/mypage/**, /api/inquiries/**), 일부 공개(GET 게시판 등)</li>
+ *   <li>커스텀 필터: PendingUserFilter(약관 미동의 차단), BanRestrictionFilter(정지 유저 차단)</li>
+ *   <li>역할 계층: ADMIN > USER (ADMIN이 USER 권한 포함)</li>
+ * </ul>
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

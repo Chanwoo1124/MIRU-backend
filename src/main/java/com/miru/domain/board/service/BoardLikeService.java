@@ -20,6 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 게시글 좋아요 서비스
+ *
+ * <p>게시글 좋아요 토글(추가/취소)을 처리한다.
+ * 좋아요 상태 변경 후 업데이트된 게시글 상세 정보를 반환하여
+ * 클라이언트가 별도 재조회 없이 화면을 갱신할 수 있도록 한다.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

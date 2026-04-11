@@ -10,6 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 유저 서비스
+ *
+ * <p>현재 로그인된 유저의 최신 정보를 DB에서 조회하여 반환한다.
+ * 세션에 저장된 캐시 정보가 아닌 DB 최신 상태를 반영하기 위해 사용된다.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

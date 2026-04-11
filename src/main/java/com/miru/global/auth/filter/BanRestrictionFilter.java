@@ -23,6 +23,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * 정지(BAN) 유저 게시글/댓글 작성 차단 필터
+ *
+ * <p>모든 요청에서 DB의 최신 유저 상태를 확인하여 BAN 유저의 특정 작업을 차단한다.
+ * 세션에 캐시된 상태가 아닌 DB를 직접 조회하는 이유:
+ * 관리자가 정지 처리해도 기존 세션의 유저는 여전히 ACTIVE로 인식할 수 있기 때문.
+ *
+ * <p>차단 대상 작업:
+ * <ul>
+ *   <li>POST /api/boards - 게시글 작성</li>
+ *   <li>POST /api/boards/{id}/comment - 댓글 작성</li>
+ * </ul>
+ *
+ * <p>필터 실행 순서: {@code UsernamePasswordAuthenticationFilter} → {@code PendingUserFilter} → 이 필터
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

@@ -19,6 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 알람 서비스
+ *
+ * <p>유저가 받은 알람 목록 조회, 읽음 처리 및 알람 생성을 담당한다.
+ * 알람 생성({@link #createAlarm})은 BoardService, AdminInquiryService에서 내부적으로 호출되며,
+ * 본인이 유발한 이벤트(예: 자신의 게시글에 자신이 댓글)는 알람을 생성하지 않는다.
+ * 읽은 알람은 목록에서 제외하여 미읽음 알람만 제공한다.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

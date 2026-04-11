@@ -14,6 +14,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 약관 동의 서비스
+ *
+ * <p>신규 가입 유저(PENDING)가 이용약관 및 개인정보처리방침에 동의하면
+ * 동의 이력을 저장하고 계정 상태를 PENDING → ACTIVE로 전환한다.
+ *
+ * <p>주의: ACTIVE/BAN 상태 유저가 이 API를 재호출하면 FORBIDDEN 예외 발생
+ * (중복 동의 방지 및 BAN 상태 우회 방지)
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

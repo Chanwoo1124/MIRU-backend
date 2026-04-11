@@ -23,6 +23,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 미약관동의(PENDING)/탈퇴(DELETE) 유저 접근 제한 필터
+ *
+ * <p>모든 요청에서 DB의 최신 유저 상태를 확인하여:
+ * <ul>
+ *   <li>DELETE 유저: 세션 강제 무효화 후 401 반환 (탈퇴 후 잔여 세션 처리)</li>
+ *   <li>PENDING 유저: 허용된 경로({@link #PENDING_ALLOWED_PATHS}) 외 접근 시 403 반환</li>
+ * </ul>
+ *
+ * <p>PENDING 유저 허용 경로: /api/agreements, /api/me, /api/logout, /oauth2, /login
+ * (약관 동의 및 로그아웃만 허용)
+ *
+ * <p>필터 실행 순서: {@code UsernamePasswordAuthenticationFilter} → 이 필터 → {@code BanRestrictionFilter}
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

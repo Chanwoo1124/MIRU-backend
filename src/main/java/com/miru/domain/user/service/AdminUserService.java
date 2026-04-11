@@ -23,6 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 유저 관리 서비스 (관리자용)
+ *
+ * <p>관리자가 유저를 조회하고 정지/해제하는 기능을 제공한다:
+ * <ul>
+ *   <li>유저 목록 조회 (닉네임 검색 포함, 20개씩 페이징)</li>
+ *   <li>특정 유저의 작성 게시글 목록 조회 (10개씩 페이징)</li>
+ *   <li>특정 유저의 댓글 목록 조회 (10개씩 페이징)</li>
+ *   <li>유저 정지/해제 토글 (BAN ↔ ACTIVE)</li>
+ * </ul>
+ * 탈퇴(DELETE) 상태 유저는 정지 처리할 수 없으며 USER_NOT_FOUND 예외를 반환한다.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

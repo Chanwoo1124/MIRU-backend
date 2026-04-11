@@ -22,6 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 문의 게시판 관리자 서비스
+ *
+ * <p>관리자가 전체 문의를 조회하고 답변을 등록/삭제하는 기능을 제공한다.
+ * 답변 등록 시:
+ * <ol>
+ *   <li>InquiryAnswer 저장</li>
+ *   <li>InquiryBoard 상태 WAITING → COMPLETED 변경</li>
+ *   <li>문의 작성자에게 INQUIRY 타입 알람 발송</li>
+ * </ol>
+ * 답변 삭제 시:
+ * <ol>
+ *   <li>InquiryBoard.clearAnswer() → orphanRemoval로 InquiryAnswer 자동 삭제</li>
+ *   <li>InquiryBoard 상태 COMPLETED → WAITING 복구</li>
+ * </ol>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

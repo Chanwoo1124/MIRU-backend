@@ -24,6 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 마이페이지 서비스
+ *
+ * <p>로그인 유저 본인의 정보를 조회/수정하는 기능을 제공한다:
+ * <ul>
+ *   <li>마이페이지 기본 정보 (닉네임, 자기분석 통계, 활동 통계)</li>
+ *   <li>내가 쓴 게시글 목록 (최신순, 10개씩)</li>
+ *   <li>내가 쓴 댓글 목록 (최신순, 10개씩, 소프트 삭제 제외)</li>
+ *   <li>닉네임 변경 (중복 확인 포함)</li>
+ *   <li>회원 탈퇴 (소프트 삭제 + 세션 무효화)</li>
+ * </ul>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

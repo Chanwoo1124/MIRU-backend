@@ -18,6 +18,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * OAuth2 로그인 실패 핸들러
+ *
+ * <p>소셜 로그인 과정에서 예외가 발생하면 에러 정보를 JSON으로 응답한다.
+ * 커스텀 예외({@link com.miru.global.error.OAuth2BusinessException})인 경우
+ * 해당 ErrorType의 HTTP 상태코드와 메시지를 사용하며,
+ * 그 외 예외는 기본적으로 USER_NOT_FOUND(404) 코드로 처리한다.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

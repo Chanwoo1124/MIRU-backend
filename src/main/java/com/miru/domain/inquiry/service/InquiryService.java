@@ -19,6 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 문의 게시판 서비스 (유저용)
+ *
+ * <p>유저가 자신의 문의를 조회/작성/삭제하는 기능을 제공한다.
+ * 다른 유저의 문의에는 접근할 수 없으며(FORBIDDEN), 관리자 답변 기능은
+ * {@link AdminInquiryService}에 분리되어 있다.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

@@ -19,6 +19,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * 커스텀 OAuth2 유저 서비스
+ *
+ * <p>소셜 로그인 인증 완료 후 유저 정보를 처리한다.
+ * Spring Security의 {@link DefaultOAuth2UserService}를 확장하여 플랫폼별 응답 정규화 및
+ * DB 회원가입/로그인 로직을 수행한다.
+ *
+ * <p>처리 흐름:
+ * <ol>
+ *   <li>소셜 플랫폼에서 유저 정보 수신 (super.loadUser)</li>
+ *   <li>플랫폼별 응답 파싱 (Google/Naver/Kakao → OAuth2Response)</li>
+ *   <li>신규 유저: 임시 닉네임(user_xxxxxxxx)으로 DB 저장, 상태 PENDING</li>
+ *   <li>기존 유저: 탈퇴 계정이면 reactivate(), 관리자 계정이면 promoteToAdmin()</li>
+ *   <li>CustomOAuth2User 반환 → 세션에 저장</li>
+ * </ol>
+ *
+ * <p>관리자 계정: {@code app.admin-google-ids} 환경변수에 등록된 Google 계정 ID만 ADMIN 역할 부여
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

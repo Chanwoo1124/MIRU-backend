@@ -23,6 +23,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * 자기분석 서비스
+ *
+ * <p>자기분석 질문 조회와 답변 저장/수정/삭제를 처리한다.
+ *
+ * <p>주요 설계 결정:
+ * <ul>
+ *   <li>비로그인 유저도 질문 목록 조회 가능 (단, answerContext/status = null로 응답)</li>
+ *   <li>로그인 유저는 질문 + 답변을 LEFT JOIN으로 한번에 조회 (N+1 방지)</li>
+ *   <li>답변 저장은 upsert 방식 - 기존 답변이 있으면 update(), 없으면 save()</li>
+ * </ul>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

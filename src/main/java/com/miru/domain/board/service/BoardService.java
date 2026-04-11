@@ -28,6 +28,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 게시글/댓글 서비스
+ *
+ * <p>게시글 CRUD, 댓글 CRUD를 처리한다.
+ * 조회 관련 메서드는 {@code @Transactional(readOnly = true)}로 성능을 최적화하며,
+ * 데이터 변경 메서드는 메서드 단위로 {@code @Transactional}을 재정의한다.
+ *
+ * <p>주요 설계 결정:
+ * <ul>
+ *   <li>관리자가 게시글 작성 시 type이 자동으로 NOTICE로 설정됨 (세션 role 미신뢰, DB role 확인)</li>
+ *   <li>댓글은 1depth만 허용 (대댓글의 대댓글 방지)</li>
+ *   <li>댓글 삭제는 소프트 삭제 방식 (스레드 구조 유지)</li>
+ *   <li>탈퇴 유저의 닉네임은 "탈퇴한 사용자"로 익명 처리</li>
+ * </ul>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
