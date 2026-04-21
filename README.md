@@ -33,7 +33,7 @@
 
 ## 👥 プロジェクトメンバー
 
-| <a href="https://github.com/Chanwoo1124"><img src="https://github.com/Chanwoo1124.png" width="100px"/><br/>イ・チャンウ<br/>(リ チャンウ)</a> | <a href="https://github.com/wyLortel"><img src="https://github.com/wyLortel.png" width="100px"/><br/>ジョン・ウヨン<br/>(ジョン ウヨン)</a> | <a href="https://github.com/Seo-JeongJin"><img src="https://github.com/Seo-JeongJin.png" width="100px"/><br/>ソ・ジョンジン<br/>(ソ ジョンジン)</a> |
+| <a href="https://github.com/Chanwoo1124"><img src="https://github.com/Chanwoo1124.png" width="100px"/><br/>イ・チャンウ</a> | <a href="https://github.com/wyLortel"><img src="https://github.com/wyLortel.png" width="100px"/><br/>ジョン・ウヨン</a> | <a href="https://github.com/Seo-JeongJin"><img src="https://github.com/Seo-JeongJin.png" width="100px"/><br/>ソ・ジョンジン</a> |
 |:---:|:---:|:---:|
 | チームリーダー・バックエンド | フロントエンド | フロントエンド |
 
