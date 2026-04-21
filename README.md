@@ -56,7 +56,13 @@
 
 ## 🛠 技術スタック
 
-> 작성 예정
+| カテゴリ | 技術 |
+|------|------|
+| フロントエンド | Next.js 16, TanStack Query 5, Tailwind CSS 4, Zustand, Axios |
+| バックエンド | Java, Spring Boot, Spring Data JPA, Spring Security, OAuth2, JWT |
+| データベース | MySQL |
+| インフラ | AWS (EC2, RDS) |
+| CI/CD | GitHub Actions |
 
 ---
 
