@@ -60,7 +60,7 @@
 | カテゴリ | 技術 |
 |------|------|
 | フロントエンド | Next.js 16, TanStack Query 5, Tailwind CSS 4, Zustand, Axios |
-| バックエンド | Java, Spring Boot, Spring Data JPA, Spring Security, OAuth2, JWT |
+| バックエンド | Java, Spring Boot, Spring Data JPA, OAuth2 |
 | データベース | MySQL |
 | インフラ | AWS (EC2, RDS) |
 | CI/CD | GitHub Actions |
