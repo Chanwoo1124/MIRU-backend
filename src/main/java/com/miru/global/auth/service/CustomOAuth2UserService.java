@@ -29,7 +29,7 @@ import java.util.UUID;
  * <p>처리 흐름:
  * <ol>
  *   <li>소셜 플랫폼에서 유저 정보 수신 (super.loadUser)</li>
- *   <li>플랫폼별 응답 파싱 (Google/Naver/Kakao → OAuth2Response)</li>
+ *   <li>플랫폼별 응답 파싱 (Google → OAuth2Response)</li>
  *   <li>신규 유저: 임시 닉네임(user_xxxxxxxx)으로 DB 저장, 상태 PENDING</li>
  *   <li>기존 유저: 탈퇴 계정이면 reactivate(), 관리자 계정이면 promoteToAdmin()</li>
  *   <li>CustomOAuth2User 반환 → 세션에 저장</li>
@@ -71,17 +71,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 소셜 플랫폼에 맞춰 데이터 주입하는 메소드
     private OAuth2Response extractProviderInfo(String registrationId, OAuth2User oAuth2User) {
-        // 네이버 로그인 시
-        if (registrationId.equals("naver")) {
-            return new NaverResponse(oAuth2User.getAttributes());
-        }
-        // 구글 로그인 시
-        else if (registrationId.equals("google")) {
+        if (registrationId.equals("google")) {
             return new GoogleResponse(oAuth2User.getAttributes());
-        }
-        // 카카오 로그인 시
-        else if (registrationId.equals("kakao")) {
-            return new KakaoResponse(oAuth2User.getAttributes());
         }
 
         throw new OAuth2BusinessException(ErrorType.UNSUPPORTED_PROVIDER);

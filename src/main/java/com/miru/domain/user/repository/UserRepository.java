@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * 소셜 플랫폼 + 소셜 식별값으로 유저 조회
      * CustomOAuth2UserService에서 로그인 시 기존 가입 여부 확인에 사용
      *
-     * @param loginFrom   소셜 플랫폼 (google / naver / kakao)
+     * @param loginFrom   소셜 플랫폼 (google)
      * @param loginFromId 해당 플랫폼에서 발급한 고유 식별값
      * @return 해당 소셜 계정의 유저 (없으면 null)
      */

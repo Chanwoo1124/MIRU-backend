@@ -28,9 +28,9 @@ public enum ErrorType {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "AUTH_001", "이미 가입된 이메일입니다."),
     /** JWT 또는 OAuth2 토큰이 유효하지 않음 */
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
-    /** Google/Naver/Kakao 외 지원하지 않는 플랫폼으로 로그인 시도 */
+    /** Google 외 지원하지 않는 플랫폼으로 로그인 시도 */
     UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH_003", "지원하지 않는 소셜 로그인입니다."),
-    /** 소셜 플랫폼에서 이메일 정보를 제공하지 않은 경우 (카카오 이메일 미동의 등) */
+    /** 소셜 플랫폼에서 이메일 정보를 제공하지 않은 경우 */
     EMAIL_REQUIRED(HttpStatus.BAD_REQUEST, "AUTH_004", "이메일 정보 제공 동의가 필요합니다."),
 
     // ===== 유저 =====

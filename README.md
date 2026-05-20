@@ -2,6 +2,7 @@
 > 日本就職を目指す韓国人学生のための自己分析支援 Web アプリ
 
 🔗 [miru.io.kr](https://miru.io.kr)
+[🇰🇷 한국어](./README.ko.md) | 🇯🇵 日本語
 
 ---
 

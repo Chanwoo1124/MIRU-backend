@@ -12,7 +12,7 @@ import java.time.LocalDate;
 /**
  * 사용자 엔티티
  *
- * <p>소셜 로그인(Google/Naver/Kakao) 전용 계정 정보를 관리한다.
+ * <p>소셜 로그인(Google) 전용 계정 정보를 관리한다.
  * 계정 상태(status)에 따라 서비스 이용 범위가 결정된다:
  * <ul>
  *   <li>PENDING  - 신규 가입 후 약관 동의 전 (마이페이지 등 제한적 접근)</li>
@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true, length = 15)
     private String nickname;
 
-    /** 로그인 플랫폼 식별자 (google / naver / kakao) */
+    /** 로그인 플랫폼 식별자 (google) */
     @Column(name = "login_from", length = 20)
     private String loginFrom;
 
