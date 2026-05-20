@@ -1,12 +1,9 @@
-🇰🇷 한국어 | [🇯🇵 日本語](./README.md)
-
----
-
 # 🔍 MIRU
-
 > 일본 취업을 목표로 하는 한국인 학생을 위한 자기분석 지원 웹 앱
 
 🔗 [miru.io.kr](https://miru.io.kr)
+
+> 🇰🇷 한국어 | [🇯🇵 日本語](./README.md)
 
 ---
 
@@ -40,8 +37,8 @@
 
 ## 👥 프로젝트 멤버
 
-| [![](https://github.com/Chanwoo1124.png) 이찬우](https://github.com/Chanwoo1124) | [![](https://github.com/wyLortel.png) 정우연](https://github.com/wyLortel) | [![](https://github.com/Seo-JeongJin.png) 서정진](https://github.com/Seo-JeongJin) |
-| :---: | :---: | :---: |
+| <a href="https://github.com/Chanwoo1124"><img src="https://github.com/Chanwoo1124.png" width="100px"/><br/>이찬우</a> | <a href="https://github.com/wyLortel"><img src="https://github.com/wyLortel.png" width="100px"/><br/>정우연</a> | <a href="https://github.com/Seo-JeongJin"><img src="https://github.com/Seo-JeongJin.png" width="100px"/><br/>서정진</a> |
+|:---:|:---:|:---:|
 | 팀 리더 · 백엔드 | 프론트엔드 | 프론트엔드 |
 
 ---
@@ -49,7 +46,7 @@
 ## ⚡ 주요 기능
 
 | 기능 | 설명 |
-| --- | --- |
+|------|------|
 | 소셜 로그인 | Google (OAuth 2.0)을 통한 간편하고 안전한 로그인 |
 | 자기분석 작성/편집 | 에디터를 활용한 강점 및 경험의 체계적인 정리 |
 | 커뮤니티 게시판 | 게시글, 좋아요, 댓글/답글을 통한 사용자 간 교류 |
@@ -63,7 +60,7 @@
 ## 🛠 기술 스택
 
 | 카테고리 | 기술 |
-| --- | --- |
+|------|------|
 | 프론트엔드 | Next.js 16, TanStack Query 5, Tailwind CSS 4, Zustand, Axios |
 | 백엔드 | Java, Spring Boot, Spring Data JPA, OAuth2 |
 | 데이터베이스 | MySQL |
@@ -74,14 +71,14 @@
 
 ## 🗂 ERD
 
-![ERD](docs/erd.png)
+![ERD](./docs/erd.png)
 
 ---
 
 ## 👨‍💻 담당 파트 — 이찬우 (팀 리더 · 백엔드)
 
 | 카테고리 | 내용 |
-| --- | --- |
+|------|------|
 | DB 설계 | 테이블 설계 · ERD 작성 |
 | API 설계 | 전체 API 설계 · 사양 책정 |
 | 자기분석 API | 질문 · 답변 작성, 진척 관리 |
@@ -97,4 +94,4 @@
 
 ## 🏗 시스템 구성도
 
-![시스템 구성도](docs/architecture.png)
+![시스템 구성도](./docs/architecture.png)
